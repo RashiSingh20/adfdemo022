@@ -1,0 +1,120 @@
+{
+	"name": "CopyPipeline_rnf",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy_rnf",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "inputblob//book.xml"
+					},
+					{
+						"name": "Destination",
+						"value": "dbo.booksfin"
+					}
+				],
+				"typeProperties": {
+					"source": {
+						"type": "XmlSource",
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "XmlReadSettings",
+							"validationMode": "none"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink"
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "$['catalog']['book'][0]['author']"
+								},
+								"sink": {
+									"name": "author",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['catalog']['book'][0]['title']"
+								},
+								"sink": {
+									"name": "title",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['catalog']['book'][0]['genre']"
+								},
+								"sink": {
+									"name": "genre",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"path": "$['catalog']['book'][0]['price']"
+								},
+								"sink": {
+									"name": "price",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"path": "$['catalog']['book'][0]['publish_date']"
+								},
+								"sink": {
+									"name": "publish_date",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"path": "$['catalog']['book'][0]['description']"
+								},
+								"sink": {
+									"name": "describe",
+									"type": "String"
+								}
+							}
+						],
+						"collectionReference": "$['catalog']['book']"
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SourceDataset_rnf",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DestinationDataset_rnf",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}
